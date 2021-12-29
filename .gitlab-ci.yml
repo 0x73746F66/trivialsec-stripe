@@ -1,0 +1,32 @@
+variables:
+  TF_BACKEND: backend/livemode
+
+before_script:
+  - touch .env
+  - make --version
+  - terraform --version
+
+stages:
+  - test
+  - deploy
+
+tf:validate:
+  tags:
+    - linode
+  stage: test
+  script:
+    - make plan
+  only:
+    refs:
+      - merge_request
+      - main
+
+tf:apply:
+  tags:
+    - linode
+  stage: deploy
+  script:
+    - make deploy
+  only:
+    refs:
+      - main
